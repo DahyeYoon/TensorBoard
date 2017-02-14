@@ -41,13 +41,15 @@ with tf.name_scope('output_layer') as oscope:
 with tf.name_scope('calculate_cost'):
     cost= tf.reduce_sum(-y_*tf.log(y)-(1-y_)*tf.log(1-y), reduction_indices=1)
     cost = tf.reduce_mean(cost)
-    tf.scalar_summary('cost', cost)
+    tf.scalar_summary('cost/', cost)
+    # tf.image_summary('cost', cost)
 with tf.name_scope('training'):
     train= tf.train.GradientDescentOptimizer(Learning_Rate).minimize(cost)
 with tf.name_scope('evaluation'):
     # argmax ==> obtaining index
     correct_prediction = tf.equal(tf.argmax(y,1), tf.argmax(y_,1))
     accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+    tf.scalar_summary('accuracy/',accuracy)
 sess = tf.Session()
 # init=tf.global_variables_initializer()
 # sess.run(init)
@@ -66,5 +68,5 @@ for i in range(1000):
         print("Loss: ", loss)
         print("Acc: ", acc)
 
-
+sess.close()
 # tensorboard --logdir=./
