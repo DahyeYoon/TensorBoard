@@ -41,7 +41,7 @@ with tf.name_scope('output_layer') as oscope:
 with tf.name_scope('calculate_cost'):
     cost= tf.reduce_sum(-y_*tf.log(y)-(1-y_)*tf.log(1-y), reduction_indices=1)
     cost = tf.reduce_mean(cost)
-    tf.summary.scalar('cost', cost)
+    tf.scalar_summary('cost', cost)
 with tf.name_scope('training'):
     train= tf.train.GradientDescentOptimizer(Learning_Rate).minimize(cost)
 with tf.name_scope('evaluation'):
@@ -55,10 +55,11 @@ saver.restore(sess,'./tensorflow_checkpoint.ckpt')
 merge=tf.merge_all_summaries()
 
 for i in range(1000):
-    _, loss, acc = sess.run([train, cost, accuracy], tensor_map)
+    summary, _, loss, acc = sess.run([merge, train, cost, accuracy], tensor_map)
+    # _, loss, acc = sess.run([train, cost, accuracy], tensor_map)
     if i%100==0:
         train_writer = tf.train.SummaryWriter('./summary/', sess.graph)
-        train_writer.add_summary()
+        train_writer.add_summary(summary, i)
         # saver.save(sess, './tensorflow_checkpoint.ckpt')
         print("==============")
         print("Step: ", i)
